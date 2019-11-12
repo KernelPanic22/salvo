@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Date;
 
 
 @SpringBootApplication
@@ -40,16 +41,15 @@ public class SalvoApplication {
             repository.save(player5);
 
 
+            Date dateGame1 = new Date();
+            Game game1 =new Game(dateGame1);
+            Game game2 =new Game(Date.from(dateGame1.toInstant().plusSeconds(3600)));
+            Game game3 =new Game(Date.from(dateGame1.toInstant().plusSeconds(7200)));
 
-            Game game1 =new Game();
-            Game game2 =new Game();
-            Game game3 =new Game();
-            Game game4 =new Game();
 
 			gameRepository.save(game1);
             gameRepository.save(game2);
             gameRepository.save(game3);
-            gameRepository.save(game4);
 
             GamePlayer gameplayer1 = new GamePlayer(game1,player1);
             GamePlayer gameplayer2 = new GamePlayer(game1,player2);
