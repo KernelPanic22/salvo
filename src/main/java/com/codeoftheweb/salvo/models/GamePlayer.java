@@ -4,10 +4,10 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class GamePlayer {
@@ -26,6 +26,9 @@ public class GamePlayer {
     @JoinColumn(name="game_id")
     private Game game;
 
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    private Set<Ship> ships;
+
     public Map<String,Object> makeGamePlayerDTO(){
        Map<String,Object> dto = new LinkedHashMap<>();
        dto.put("id", this.getId());
@@ -33,6 +36,17 @@ public class GamePlayer {
        return dto;
     }
 
+    public List<Object> getShipDTO(){
+        return this.getShips()
+                        .stream()
+                        .map(ship -> ship.makeShipDTO())
+                        .collect(toList());
+    }
+
+    public Ship addShip(String shipType,List<String> locations){
+        Ship ship=new Ship(shipType,locations,this);
+        return ship;
+    }
 
     public GamePlayer(){
         this.joinDate=new Date();
@@ -43,6 +57,7 @@ public class GamePlayer {
         this.player=player;
         this.joinDate=new Date();
     }
+
 
 
 
@@ -72,5 +87,9 @@ public class GamePlayer {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public Set<Ship> getShips() {
+        return ships;
     }
 }
