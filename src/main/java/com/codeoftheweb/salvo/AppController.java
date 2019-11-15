@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +41,12 @@ public class AppController {
 
         Map<String,Object> dto = game.makeGameDTO();
         dto.put("ships",gameplayer.getShipDTO());
+        dto.put("salvoes", game.getGamePlayers()
+                            .stream()
+                            .flatMap(gameplayer1 -> gameplayer1.getSalvoes()
+                                                    .stream()
+                                                    .map(salvo -> salvo.getSalvoDTO()))
+                            .collect(toList()));
         return dto;
         }
     }

@@ -3,11 +3,8 @@ package com.codeoftheweb.salvo;
 import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
 import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
-import com.codeoftheweb.salvo.repository.GamePlayerRepository;
-import com.codeoftheweb.salvo.repository.GameRepository;
-import com.codeoftheweb.salvo.repository.PlayerRepository;
-import com.codeoftheweb.salvo.repository.ShipRepository;
+import com.codeoftheweb.salvo.models.Salvo;
+import com.codeoftheweb.salvo.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -27,7 +24,8 @@ public class SalvoApplication {
 
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repository, GameRepository gameRepository,
-                                      GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository) {
+                                      GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository,
+                                      SalvoRepository salvoRepository) {
 		return (args) -> {
 
 
@@ -85,7 +83,21 @@ public class SalvoApplication {
             shipRepository.save(gameplayer2.addShip("Destroyer",locationsS2));
             shipRepository.save(gameplayer3.addShip("Destroyer",locationsS3));
 
+            List<String> locationsSalvo1= new ArrayList<>();
+            locationsSalvo1.add("H1");
+            locationsSalvo1.add("H2");
 
+
+            List<String> locationsSalvo2= new ArrayList<>();
+            locationsSalvo2.add("A2");
+            locationsSalvo2.add("B2");
+
+            List<Salvo> salvoes = new ArrayList<>();
+
+            salvoes.add(new Salvo(gameplayer1,locationsSalvo1,1));
+            salvoes.add(new Salvo(gameplayer2,locationsSalvo2,1));
+
+            salvoRepository.saveAll(salvoes);
 		};
 
 
