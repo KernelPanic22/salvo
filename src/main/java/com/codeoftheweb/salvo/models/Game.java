@@ -31,7 +31,6 @@ public class Game {
                 .stream()
                 .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
-
         return dto;
     }
 

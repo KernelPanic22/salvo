@@ -27,12 +27,10 @@ public class AppController {
 
     @RequestMapping("/games")
     public List<Object> getGameAll() {
-
         return gameRepository.findAll()
                 .stream()
                 .map(game -> game.makeGameDTO())
                 .collect(toList());
-
         }
 
     @RequestMapping("/game_view/{gamePlayerId}")
@@ -43,7 +41,7 @@ public class AppController {
         Map<String,Object> dto = game.makeGameDTO();
         dto.put("ships",gameplayer.getShipDTO());
         return dto;
-
         }
     }
+
 

@@ -44,12 +44,10 @@ public class SalvoApplication {
             repository.save(player4);
             repository.save(player5);
 
-
             Date dateGame1 = new Date();
             Game game1 =new Game(dateGame1);
             Game game2 =new Game(Date.from(dateGame1.toInstant().plusSeconds(3600)));
             Game game3 =new Game(Date.from(dateGame1.toInstant().plusSeconds(7200)));
-
 
 			gameRepository.save(game1);
             gameRepository.save(game2);

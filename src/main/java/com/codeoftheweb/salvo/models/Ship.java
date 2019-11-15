@@ -21,6 +21,7 @@ public class Ship {
     private String shipType;
 
     @ElementCollection
+    @Column(name = "location")
     private List<String> locations = new ArrayList<>();
 
     public Map<String,Object> makeShipDTO(){
