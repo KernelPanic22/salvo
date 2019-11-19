@@ -26,6 +26,15 @@ public class Salvo {
 
     private long turn;
 
+    public Map<String,Object> getSalvoDTO() {
+        Map<String,Object> dto = new LinkedHashMap<>();
+
+        dto.put("turn", this.getTurn());
+        dto.put("player", this.getGamePlayer().getPlayer().getId());
+        dto.put("locations",this.getLocations());
+        return dto;
+    }
+
     public Salvo() {
 
     }
@@ -63,15 +72,6 @@ public class Salvo {
 
     public void setTurn(long turn) {
         this.turn = turn;
-    }
-
-    public Map<String,Object> getSalvoDTO() {
-        Map<String,Object> dto = new LinkedHashMap<>();
-
-        dto.put("turn", this.getTurn());
-        dto.put("player", this.getGamePlayer().getPlayer().getId());
-        dto.put("locations",this.getLocations());
-        return dto;
     }
 }
 
