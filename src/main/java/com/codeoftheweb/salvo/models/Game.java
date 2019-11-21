@@ -4,11 +4,10 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Game {
@@ -22,15 +21,24 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    Set<Score> scores;
+
 
     public Map<String, Object> makeGameDTO() {
         Map<String,Object> dto = new LinkedHashMap<>();
+
+
         dto.put("id" , this.getId());
         dto.put("created", this.creationDate);
         dto.put("gamePlayers", this.getGamePlayers()
                 .stream()
                 .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
+        dto.put("scores",this.getScores()
+                        .stream()
+                        .map(score -> score.makeScoreDTO())
+                        .collect(Collectors.toList()));
         return dto;
     }
 
@@ -69,5 +77,9 @@ public class Game {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
     }
 }

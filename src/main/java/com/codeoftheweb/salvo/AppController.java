@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +29,22 @@ public class AppController {
 
     @RequestMapping("/games")
     public List<Object> getGameAll() {
-        return gameRepository.findAll()
+       return gameRepository.findAll()
                 .stream()
                 .map(game -> game.makeGameDTO())
                 .collect(toList());
         }
+
+    @RequestMapping("/leaderboard")
+    public List<Object> getLeaderboardDTO(){
+        List<Object> dto = new LinkedList<>();
+                dto.add(gamePlayerRepository
+                        .findAll()
+                        .stream()
+                        .map(gamePlayer ->   gamePlayer.getPlayer().getLeaderboardDTO())
+                        .collect(toList()));
+        return dto;
+    }
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public Map<String,Object> getGamePlayerDTO(@PathVariable Long gamePlayerId){

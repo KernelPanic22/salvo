@@ -3,6 +3,8 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static java.util.stream.Collectors.toList;
 
 @Entity
@@ -35,7 +37,7 @@ public class GamePlayer {
        dto.put("player", this.getPlayer().makePlayerDTO());
        return dto;
     }
-
+    
     public List<Object> getShipDTO(){
         return this.getShips()
                         .stream()
@@ -49,7 +51,9 @@ public class GamePlayer {
         return ship;
     }
 
-
+    public Score getScore(){
+        return this.player.getScore(this.game);
+    }
 
     public GamePlayer(){
         this.joinDate=new Date();
