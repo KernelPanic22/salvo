@@ -16,16 +16,16 @@ public class Ship {
     @JoinColumn(name="gamePlayer_id")
     GamePlayer gamePlayer;
 
-    private String shipType;
+    private String type;
 
     @ElementCollection
     @Column(name = "shipLocations")
-    private List<String> locations = new ArrayList<>();
+    private List<String> shipLocations = new ArrayList<>();
 
     public Map<String,Object> makeShipDTO(){
         Map<String,Object> dto = new LinkedHashMap<>();
-        dto.put("type",this.getShipType());
-        dto.put("locations", this.locations);
+        dto.put("type",this.getType());
+        dto.put("locations", this.shipLocations);
         return dto;
     }
 
@@ -33,17 +33,20 @@ public class Ship {
 
     }
 
-    public Ship(String shipType,List<String> locations,GamePlayer gamePlayer){
-        this.shipType=shipType;
-        this.locations=locations;
+    public Ship(String type, List<String> shipLocations, GamePlayer gamePlayer){
+        this.type = type;
+        this.shipLocations = shipLocations;
         this.gamePlayer=gamePlayer;
     }
 
 
-    public Ship(List<String> locations){
-        this.locations=locations;
+    public Ship(List<String> shipLocations){
+        this.shipLocations = shipLocations;
     }
 
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
+    }
 
     public long getId() {
         return id;
@@ -53,15 +56,15 @@ public class Ship {
         return gamePlayer;
     }
 
-    public String getShipType() {
-        return shipType;
+    public String getType() {
+        return type;
     }
 
-    public void setShipType(String shipType) {
-        this.shipType = shipType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public List<String> getLocations() {
-        return locations;
+    public List<String> getShipLocations() {
+        return shipLocations;
     }
 }

@@ -30,6 +30,7 @@ public class Game {
 
         dto.put("id" , this.getId());
         dto.put("created", this.creationDate);
+        dto.put("gameState", "PLACESHIPS");
         dto.put("gamePlayers", this.getGamePlayers()
                 .stream()
                 .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
@@ -38,6 +39,7 @@ public class Game {
                         .stream()
                         .map(score -> score.makeScoreDTO())
                         .collect(Collectors.toList()));
+
         return dto;
     }
 
