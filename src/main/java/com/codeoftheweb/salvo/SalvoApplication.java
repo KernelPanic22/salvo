@@ -157,8 +157,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/rest/**").hasAuthority("USER")
                 .antMatchers("/web/**").permitAll()
+                .antMatchers("/web/img/**").permitAll()
                 .antMatchers("/api/**").permitAll()
-                .anyRequest().denyAll();
+                .anyRequest().permitAll();
 
 
             http.formLogin()

@@ -30,7 +30,6 @@ public class Game {
 
         dto.put("id" , this.getId());
         dto.put("created", this.creationDate);
-        dto.put("gameState", "PLACESHIPS");
         dto.put("gamePlayers", this.getGamePlayers()
                 .stream()
                 .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
@@ -42,6 +41,8 @@ public class Game {
 
         return dto;
     }
+
+
 
     public Game(){
         this.creationDate=new Date();

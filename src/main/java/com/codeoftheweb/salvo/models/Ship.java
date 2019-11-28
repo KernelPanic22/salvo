@@ -32,13 +32,19 @@ public class Ship {
     public Ship(){
 
     }
-
     public Ship(String type, List<String> shipLocations, GamePlayer gamePlayer){
         this.type = type;
         this.shipLocations = shipLocations;
         this.gamePlayer=gamePlayer;
     }
 
+    public Ship shipIsHit(List<String> loc){
+        if(!Collections.disjoint(this.getShipLocations(),loc)){
+            return this;
+        }else {
+            return null;
+        }
+    }
 
     public Ship(List<String> shipLocations){
         this.shipLocations = shipLocations;

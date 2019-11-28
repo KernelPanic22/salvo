@@ -66,7 +66,13 @@ public class GamePlayer {
     }
 
 
-
+    public GamePlayer getOpponent(){
+        return this.getGame()
+                .gamePlayers
+                .stream()
+                .filter(gamePlayer -> gamePlayer.getId()!=this.getId())
+                .findFirst().orElse(new GamePlayer());
+    }
 
     public long getId() {
         return id;
