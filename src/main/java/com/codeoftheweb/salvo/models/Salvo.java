@@ -22,7 +22,7 @@ public class Salvo {
 
     @ElementCollection
     @Column(name = "location")
-    private List<String> shipLocations = new ArrayList<>();
+    private List<String> salvoLocations = new ArrayList<>();
 
     private long turn;
 
@@ -31,7 +31,7 @@ public class Salvo {
 
         dto.put("turn", this.getTurn());
         dto.put("player", this.getGamePlayer().getPlayer().getId());
-        dto.put("locations",this.getShipLocations());
+        dto.put("locations",this.getSalvoLocations());
         return dto;
     }
 
@@ -39,12 +39,18 @@ public class Salvo {
 
     }
 
-    public Salvo(GamePlayer gamePlayer, List<String> shipLocations, long turn){
+    public Salvo(GamePlayer gamePlayer, List<String> salvoLocations, long turn){
         this.gamePlayer=gamePlayer;
-        this.shipLocations = shipLocations;
+        this.salvoLocations = salvoLocations;
         this.turn=turn;
     }
 
+    public long getHits(Ship ship){
+        return this.getSalvoLocations()
+                .stream()
+                .filter(salvoLocation -> ship.getShipLocations().contains(salvoLocation))
+                .count();
+    }
 
     public long getId() {
         return id;
@@ -58,12 +64,12 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public List<String> getShipLocations() {
-        return shipLocations;
+    public List<String> getSalvoLocations() {
+        return salvoLocations;
     }
 
-    public void setShipLocations(List<String> shipLocations) {
-        this.shipLocations = shipLocations;
+    public void setSalvoLocations(List<String> salvoLocations) {
+        this.salvoLocations = salvoLocations;
     }
 
     public long getTurn() {

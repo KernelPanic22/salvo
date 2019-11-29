@@ -49,34 +49,6 @@ public class Player {
 
     }
 
-    public long scoreCount(List<Double> totalScores ,double x){
-        return totalScores.stream()
-                .filter(score -> score==x)
-                .count();
-    }
-
-    public Map<String,Object> getLeaderboardDTO(){
-
-        List<Double> allScores=this.getScores()
-                            .stream()
-                            .map(score -> score.getScore())
-                            .collect(Collectors.toList());
-
-        long totalWon = scoreCount(allScores,1.0);
-
-        long totalLose = scoreCount(allScores,0.0);
-
-        long totalTied = scoreCount(allScores,0.5);
-
-        Map<String,Object> dto = new LinkedHashMap<>();
-        dto.put("name",this.getUserName());
-        dto.put("total",allScores.stream().reduce(0.0,Double::sum));
-        dto.put("won",  totalWon);
-        dto.put("lost",totalLose);
-        dto.put("tied",totalTied);
-
-        return dto;
-    }
 
     public Set<Score> getScores() {
         return scores;

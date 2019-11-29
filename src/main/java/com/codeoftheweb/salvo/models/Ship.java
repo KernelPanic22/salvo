@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Ship {
@@ -38,13 +39,7 @@ public class Ship {
         this.gamePlayer=gamePlayer;
     }
 
-    public Ship shipIsHit(List<String> loc){
-        if(!Collections.disjoint(this.getShipLocations(),loc)){
-            return this;
-        }else {
-            return null;
-        }
-    }
+
 
     public Ship(List<String> shipLocations){
         this.shipLocations = shipLocations;
