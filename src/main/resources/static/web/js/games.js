@@ -6,6 +6,7 @@ var submitButton;
 updateJson();
 
 $(function() {
+    debugger;
     $('.submitbutton').click(function () {
         submitButton = $(this).attr('name')
     });

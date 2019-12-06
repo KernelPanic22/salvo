@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.models;
 
+import com.codeoftheweb.salvo.Util;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -80,25 +81,21 @@ public class GamePlayer {
         return this.getShips().stream()
                 .flatMap(ship -> ship.getShipLocations()
                         .stream().flatMap(shipLocations -> salvo.getSalvoLocations()
-                                .stream().filter(salvoLoc -> shipLocations.contains(salvoLoc))))
+                                .stream().filter(shipLocations::contains)))
                 .collect(Collectors.toList());
     }
 
-    public Long salvoMissed(List<String> salvoHited) {
-        long salvosLocationsPerTurn = 5;
-        return salvosLocationsPerTurn - salvoHited.size();
+    public int salvoMissed(List<String> salvoHited,Salvo salvo) {
+        return salvo.getSalvoLocations().size() - salvoHited.size();
     }
 
 
-    public Map<String, Object> makeHitDTO(Salvo salvo, List<Salvo> oppSalvo) {
+    public Map<String, Object> makeHitDTO(Salvo salvo) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("turn", salvo.getTurn());
         dto.put("hitLocations", this.salvoHitLocations(salvo));
-        dto.put("damages", Stream.concat(this.DTOHitsbyTurn(salvo).entrySet().stream(),
-                this.getHitsDTO(oppSalvo, salvo).entrySet().stream())
-                .collect(
-                        Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        dto.put("missed", salvoMissed(this.salvoHitLocations(salvo)));
+        dto.put("damages", Util.concatMap(this.DTOHitsbyTurn(salvo),this.getTotalHitsDTO(salvo)));
+        dto.put("missed", salvoMissed(this.salvoHitLocations(salvo),salvo));
         return dto;
     }
 
@@ -112,8 +109,9 @@ public class GamePlayer {
         return dto;
     }
 
-    public Map<String, Object> getHitsDTO(List<Salvo> oppSalvo, Salvo salvo) {
+    public Map<String, Object> getTotalHitsDTO(Salvo salvo) {
         Map<String, Object> dto = new LinkedHashMap<>();
+        List<Salvo> oppSalvo= new ArrayList<>(this.getOpponent().getSalvoes());
         dto.put("carrier", oppSalvo.stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn()).map(salvoOp -> salvoOp.getHits(getShipByType("carrier"))).reduce(Long::sum).get());
         dto.put("battleship", oppSalvo.stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn()).map(salvoOp -> salvoOp.getHits(getShipByType("battleship"))).reduce(Long::sum).get());
         dto.put("submarine", oppSalvo.stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn()).map(salvoOp -> salvoOp.getHits(getShipByType("submarine"))).reduce(Long::sum).get());
@@ -121,6 +119,36 @@ public class GamePlayer {
         dto.put("patrolboat", oppSalvo.stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn()).map(salvoOp -> salvoOp.getHits(getShipByType("patrolboat"))).reduce(Long::sum).get());
         return dto;
     }
+
+    public boolean lost(){
+        boolean carrierSunk,battleshipSunk,submarineSunk,destroyerSunk,patrolboatSunk;
+        battleshipSunk=carrierSunk = submarineSunk= destroyerSunk =patrolboatSunk = false;
+
+        List<Salvo> oppSalvo = new ArrayList<>(this.getOpponent().getSalvoes());
+
+        if(getShipByType("carrier").getShipLocations().size()==oppSalvo.stream().map(salvoOp -> salvoOp.getHits(getShipByType("carrier"))).reduce(Long::sum).get()){
+            carrierSunk=true;
+        }
+        if(getShipByType("battleship").getShipLocations().size()==oppSalvo.stream().map(salvoOp -> salvoOp.getHits(getShipByType("battleship"))).reduce(Long::sum).get()){
+            battleshipSunk=true;
+        }
+        if(getShipByType("submarine").getShipLocations().size()==oppSalvo.stream().map(salvoOp -> salvoOp.getHits(getShipByType("submarine"))).reduce(Long::sum).get()){
+            submarineSunk=true;
+        }
+        if(getShipByType("destroyer").getShipLocations().size()==oppSalvo.stream().map(salvoOp -> salvoOp.getHits(getShipByType("destroyer"))).reduce(Long::sum).get()){
+            destroyerSunk=true;
+        }
+        if(getShipByType("patrolboat").getShipLocations().size()==oppSalvo.stream().map(salvoOp -> salvoOp.getHits(getShipByType("patrolboat"))).reduce(Long::sum).get()){
+            patrolboatSunk=true;
+        }
+        if(carrierSunk && battleshipSunk && submarineSunk && destroyerSunk && patrolboatSunk){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
 
 
     public GamePlayer getOpponent() {

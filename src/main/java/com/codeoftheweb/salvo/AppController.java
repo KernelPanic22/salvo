@@ -38,6 +38,8 @@ public class AppController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private ScoreRepository scoreRepository;
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Map<String, Object>> getGamePlayerDTO(@PathVariable Long gamePlayerId, Authentication authentication) {
@@ -100,16 +102,56 @@ public class AppController {
             return "WAITINGFOROPP";
         }
 
-        if (gamePlayerSelf.getId() < gamePlayerOpp.getId()) {
-            return "PLAY";
+        if (gamePlayerOpp.getShips().isEmpty()) {
+            return "WAIT";
         }
 
+        if(gamePlayerSelf.getSalvoes().size()>0 &&
+                gamePlayerOpp.getSalvoes().size()>0 &&
+                gamePlayerSelf.getSalvoes().size()== gamePlayerOpp.getSalvoes().size()
+                && gamePlayerOpp.lost()
+                && gamePlayerSelf.lost()){
 
-        if (gamePlayerSelf.getId() > gamePlayerOpp.getId()) {
+            scoreRepository.save(new Score(gamePlayerSelf.getGame(),gamePlayerOpp.getPlayer(),0.5));
+            scoreRepository.save(new Score(gamePlayerSelf.getGame(),gamePlayerSelf.getPlayer(),0.5));
+            return "TIE";
+        }
+
+        if(gamePlayerOpp.getSalvoes().size()>0 && gamePlayerSelf.getSalvoes().size()>0
+                && gamePlayerSelf.getSalvoes().size()== gamePlayerOpp.getSalvoes().size()
+                && gamePlayerSelf.lost()){
+            scoreRepository.save(new Score(gamePlayerSelf.getGame(),gamePlayerSelf.getPlayer(),0));
+            scoreRepository.save(new Score(gamePlayerSelf.getGame(),gamePlayerOpp.getPlayer(),1));
+            return "LOST";
+        }
+
+        if(gamePlayerSelf.getSalvoes().size()>0 && gamePlayerOpp.getSalvoes().size()>0
+                && gamePlayerSelf.getSalvoes().size()== gamePlayerOpp.getSalvoes().size()
+                && gamePlayerOpp.lost()){
+            return "WON";
+        }
+
+        if (gamePlayerSelf.getId() < gamePlayerOpp.getId()
+                && gamePlayerSelf.getSalvoes().size()==gamePlayerOpp.getSalvoes().size()) {
+            return "PLAY";
+        }
+        if (gamePlayerSelf.getId() < gamePlayerOpp.getId()
+                && gamePlayerSelf.getSalvoes().size()>gamePlayerOpp.getSalvoes().size()) {
+            return "WAIT";
+        }
+
+        if(gamePlayerSelf.getId() > gamePlayerOpp.getId()
+                && gamePlayerSelf.getSalvoes().size() < gamePlayerOpp.getSalvoes().size() ){
+            return "PLAY";
+        }
+        if(gamePlayerSelf.getId() > gamePlayerOpp.getId()
+                && gamePlayerSelf.getSalvoes().size() == gamePlayerOpp.getSalvoes().size() ){
             return "WAIT";
         }
         return "LOST";
     }
+
+
 
 
     private Map<String, Object> salvoHit(GamePlayer gameplayer) {
@@ -119,16 +161,13 @@ public class AppController {
             dto.put("self", gameplayer.getOpponent()
                     .getSalvoes()
                     .stream()
-                    .map(salvo -> gameplayer.makeHitDTO(salvo, new ArrayList<Salvo>(gameplayer
-                            .getOpponent()
-                            .getSalvoes())))
+                    .map(gameplayer::makeHitDTO)
                     .collect(Collectors.toList()));
 
             dto.put("opponent", gameplayer
                     .getSalvoes()
                     .stream()
-                    .map(salvo -> gameplayer.makeHitDTO(salvo, new ArrayList<Salvo>(gameplayer
-                            .getSalvoes())))
+                    .map(gameplayer.getOpponent()::makeHitDTO)
                     .collect(Collectors.toList()));
         }else{
             dto.put("self",new ArrayList<>());
